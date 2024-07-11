@@ -36,9 +36,10 @@ raw_response_weather = HTTP.get(pirate_weather_url)
 parsed_response_weather = JSON.parse(raw_response_weather)
 
 currently_hash = parsed_response_weather.fetch("currently")
-
 current_temp = currently_hash.fetch("temperature")
-current_summary = currently_hash.fetch("summary")
+
+hourly_hash = parsed_response_weather.fetch("hourly")
+hourly_summary = hourly_hash.fetch("summary")
 
 puts "It is currently " + current_temp.to_s + "."
-puts "Next hour: " + current_summary.to_s + "."
+puts "Next hour: " + hourly_summary.to_s + "."
