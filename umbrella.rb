@@ -1,3 +1,6 @@
+pp "Where are you located?"
+user_location = gets.chomp
+
 # I've already created a string variable above: pirate_weather_api_key
 # It contains sensitive credentials that hackers would love to steal so it is hidden for security reasons.
 
