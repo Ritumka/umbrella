@@ -1,7 +1,8 @@
 pp "Where are you located?"
-user_location = gets.chomp.gsub(" ", "%20")
+user_location = gets.chomp
+puts "Checking the weather at " + user_location + "..."
 
-maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location + "&key=" + ENV.fetch("GMAPS_KEY")
+maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location.gsub(" ", "%20") + "&key=" + ENV.fetch("GMAPS_KEY")
 
 require "http"
 
@@ -21,26 +22,23 @@ geo = first_result.fetch("geometry")
 
 loc = geo.fetch("location")
 
-pp latitude = loc.fetch("lat")
-pp longitude = loc.fetch("lng")
+latitude = loc.fetch("lat")
+longitude = loc.fetch("lng")
 
-# I've already created a string variable above: pirate_weather_api_key
-# It contains sensitive credentials that hackers would love to steal so it is hidden for security reasons.
+puts "Your coordinates are " + latitude.to_s + ", " + longitude.to_s
 
-# pirate_weather_api_key = ENV.fetch("PIRATE_WEATHER_KEY")
+pirate_weather_api_key = ENV.fetch("PIRATE_WEATHER_KEY")
 
-# Assemble the full URL string by adding the first part, the API token, and the last part together
-# pirate_weather_url = "https://api.pirateweather.net/forecast/" + pirate_weather_api_key + "/41.8887,-87.6355"
+pp pirate_weather_url = "https://api.pirateweather.net/forecast/" + pirate_weather_api_key + "/" + latitude.to_s + "," + longitude.to_s
 
-# Place a GET request to the URL
-# raw_response = HTTP.get(pirate_weather_url)
+raw_response_weather = HTTP.get(pirate_weather_url)
 
-# require "json"
+parsed_response_weather = JSON.parse(raw_response_weather)
 
-# parsed_response = JSON.parse(raw_response)
+currently_hash = parsed_response_weather.fetch("currently")
 
-# currently_hash = parsed_response.fetch("currently")
+current_temp = currently_hash.fetch("temperature")
+current_summary = currently_hash.fetch("summary")
 
-# current_temp = currently_hash.fetch("temperature")
-
-# puts "The current temperature is " + current_temp.to_s + "."
+puts "It is currently " + current_temp.to_s + "."
+puts "Next hour: " + current_summary.to_s + "."
