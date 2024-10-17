@@ -41,5 +41,5 @@ current_temp = currently_hash.fetch("temperature")
 hourly_hash = parsed_response_weather.fetch("hourly")
 hourly_summary = hourly_hash.fetch("summary")
 
-puts "It is currently " + current_temp.to_s + "."
+puts "It is currently " + current_temp.to_s + "°F."
 puts "Next hour: " + hourly_summary.to_s + "."
