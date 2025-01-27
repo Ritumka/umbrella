@@ -2,12 +2,14 @@
 require "http"
 require "json"
 require "dotenv/load"
+require "ascii_charts"
 
 puts "Where are you?"
 user_location = gets.chomp
 
-puts "Checking the weather at " + user_location.to_s + "...."
+puts "Let's see what the weather is in " + user_location.to_s + "...."
 
+# Find out latitude and longitude
 gmaps_api_key = ENV.fetch("GMAPS_KEY")
 
 # Assemble the full URL string by adding the first part, the API token, and the last part together
@@ -44,28 +46,33 @@ hourly_summary = hourly_hash.fetch("summary")
 puts "The current temperature is " + current_temp.to_s + "F. "
 puts "Next hour: " + hourly_summary.to_s
 
-
+# Precipation probability
 hourly_data_array = hourly_hash.fetch("data")
 next_twelve_hours = hourly_data_array[1..12]
 
 any_precipitation = false
 
-next_twelve_hours.each do |hour_hash|
+precip_array = [] # for ascii chart
+
+next_twelve_hours.each_with_index do |hour_hash, index|
   precip_probability = hour_hash.fetch("precipProbability")
+  precip_array.push([index + 1, (precip_probability * 100).round]) # push the array to the ascii chart
 
   if precip_probability > 0.10
     any_precipitation = true
 
     precip_time = Time.at(hour_hash.fetch("time"))
-
     seconds_from_now = precip_time - Time.now
-
     hours_from_now = seconds_from_now / 60 / 60
 
     puts "In #{hours_from_now.round} hours, there is a #{(precip_probability * 100).round}% chance of precipitation."
   end
 end
 
+# build a chart
+puts AsciiCharts::Cartesian.new(precip_array, :bar => true, :hide_zero => true).draw
+
+# umrella app advice
 if any_precipitation == true
   puts "You might want to take an umbrella!"
 else
